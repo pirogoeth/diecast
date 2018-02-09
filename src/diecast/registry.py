@@ -14,6 +14,8 @@ __components: ComponentRegistry = {}
 
 
 def get_registry() -> ComponentRegistry:
+    ''' Returns the default global registry.
+    '''
 
     global __components
     return __components
@@ -23,8 +25,20 @@ def register_component(cls: Type[Component],
                        init: Optional[Callable[..., Component]]=None,
                        persist: bool=True,
                        registry: ComponentRegistry=None):
+    ''' Register a component with the dependency injection system.
 
-    if not registry:
+        `cls` is the class that will be registered in the registry.
+
+        `init` is the Callable that will provide an instance of `cls` for injection.
+            Before `init` is called, dependency injection is performed on the function.
+
+        `persist` specifies that the created instance should be stored in the registry.
+
+        `registry` is the `ComponentRegistry` instance that the component will be registered with.
+            If `None`, will use the default global registry.
+    '''
+
+    if registry is None:
         global __components
         registry = __components
 

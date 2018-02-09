@@ -26,7 +26,8 @@ def _not_injectable(registry: ComponentRegistry, hint: Type) -> bool:
 def build_arg_mapping(fn: Callable) -> Mapping[str, Any]:
 
     hints = get_type_hints(fn)
-    hints.pop('return')
+    if 'return' in hints:
+        hints.pop('return')
 
     arg_names = fn.__code__.co_varnames[:fn.__code__.co_argcount]
     for arg in arg_names:

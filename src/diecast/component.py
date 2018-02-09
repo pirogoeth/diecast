@@ -5,6 +5,9 @@ from typing import Type
 
 
 class Component(abc.ABC):
+    ''' Abstract base class defining a barebones implementation
+        of a Component type.
+    '''
 
     @classmethod
     @abc.abstractmethod
