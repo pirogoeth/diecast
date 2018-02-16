@@ -2,6 +2,7 @@
 
 from typing import (
     Any,
+    Callable,
     Dict,
     NewType,
     Type,
@@ -14,4 +15,7 @@ ComponentRegistry = NewType(
     'ComponentRegistry',
     Dict[Type[Component], ComponentState],
 )
-
+Injector = NewType(
+    'Injector',
+    Callable[[Callable], Callable],
+)

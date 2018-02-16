@@ -1,0 +1,102 @@
+diecast
+=======
+
+Diecast is a dependency injection framework for Python.
+
+It aims to be very simple to use, with an extremely simple API.
+
+
+## Usage
+
+To start with diecast, install it with `pip`:
+
+    pip install -e git+https://github.com/pirogoeth/diecast.git#egg=diecast
+
+
+### Component Registry
+
+Diecast has a global registry that can be used. Otherwise, you can easily build a new registry:
+
+    from diecast.types import ComponentRegistry
+    my_registry = ComponentRegistry()
+
+
+Or, if you want to avoid the re-typed spirit of the library:
+
+    my_registry = {}
+
+
+### Injectors
+
+Injectors must be created to inject dependencies into functions.  You can build an injector using `make_injector`:
+
+    from diecast.inject import make_injector
+
+    # If you're using the global registry
+    from diecast.registry import get_registry
+    my_registry = get_registry()
+
+    inject = make_injector(my_registry)
+
+
+### Injecting Components
+
+After creating an injector, you can use it to decorate any function you want your components to be injected to:
+
+    @inject
+    def my_function(item: MyComponent) -> Any:
+        return do_something(item)
+
+    my_function()
+
+
+### Creating Components
+
+Diecast has a simple `Component` interface for building injectable components:
+
+    from diecast.component import Component
+
+    class MyComponent(Component):
+
+        @classmethod
+        def init(cls: Type[Component]) -> 'MyComponent':
+            return MyComponent()
+
+
+### Registering Components
+
+After defining your component(s), register them with the registry:
+
+    from diecast.registry import register_component
+
+    register_component(
+        # `cls` is the type we will be injecting
+        cls=MyComponent,
+        # `init` is a callable which will create the instance of `cls`
+        # <Component>.init is the default initializer and does not need to be explicitly set
+        init=MyComponent.init,
+        # `init` will *only* be called once and the instance will be stored
+        persist=True,
+        # `registry` defaults to the global registry
+        # set it to your registry if you so desire
+        registry=my_registry,
+    )
+
+
+## Examples
+
+Some more practical usage examples are include in the [examples directory](/examples/).
+
+
+## Contributing
+
+Pull requests are welcomed and encouraged.  Feel free to ask questions via the issue tracker or anywhere else (such as [Gitter](https://gitter.im/pirogoeth)).
+
+If you're submitting a PR, please install [`pre-commit`](https://github.com/pre-commit/pre-commit) and install the local git pre-commit hook to run style checks. 
+
+Any contributions will be greatly appreciated <3.
+
+
+## License
+
+Licensed under MIT. See [LICENSE](/LICENSE) for details.

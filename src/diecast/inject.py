@@ -13,7 +13,7 @@ from typing import (
     get_type_hints,
 )
 
-from diecast.types import ComponentRegistry
+from diecast.types import Injector, ComponentRegistry
 
 _log = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ def map_passthru_args(passthru_args: List[str], *args, **kw) -> Mapping[str, Any
     return arg_map
 
 
-def make_injector(registry: ComponentRegistry) -> Callable[[Callable], Callable]:
+def make_injector(registry: ComponentRegistry) -> Injector:
 
     def _injector(fn: Callable):
 
