@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath('src'))
 
 setup(
     name='diecast',
-    version='0.1.0',
+    version='0.2.0',
     description='Dependency Injector framework for Python 3',
 
     url='https://glow.dev.maio.me/sjohnson/diecast',

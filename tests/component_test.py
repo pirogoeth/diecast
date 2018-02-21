@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from nose.tools import *
 
 from diecast.inject import make_injector
-from diecast.registry import register_component
-from diecast.types import ComponentRegistry
+from diecast.registry import ComponentRegistry, register_component
 from tests.components import (
     SimpleComponent,
     ComplexComponent,
@@ -16,7 +14,7 @@ class ComponentTestCase(unittest.TestCase):
 
     def setUp(self):
 
-        self.registry = ComponentRegistry({})
+        self.registry = ComponentRegistry()
 
     def register_simple_component(self, persist=False):
 
@@ -43,21 +41,22 @@ class ComponentTestCase(unittest.TestCase):
         self.register_simple_component(persist=False)
 
         self.assertIn(SimpleComponent, self.registry)
-        self.assertEqual(self.registry[SimpleComponent]['instance'], None)
+        self.assertEqual(self.registry.get(SimpleComponent)['instance'], None)
 
     def register_complex_component_test(self):
 
+        self.register_simple_component(persist=False)
         self.register_complex_component(persist=False)
 
         self.assertIn(ComplexComponent, self.registry)
-        self.assertEqual(self.registry[ComplexComponent]['instance'], None)
+        self.assertEqual(self.registry.get(ComplexComponent)['instance'], None)
 
     def persist_simple_component_test(self):
 
         self.register_simple_component(persist=True)
 
         self.assertIn(SimpleComponent, self.registry)
-        self.assertNotEqual(self.registry[SimpleComponent]['instance'], None)
+        self.assertNotEqual(self.registry[SimpleComponent], None)
 
     def persist_complex_component_test(self):
 
@@ -65,11 +64,11 @@ class ComponentTestCase(unittest.TestCase):
         self.register_complex_component(persist=True)
 
         self.assertIn(ComplexComponent, self.registry)
-        self.assertNotEqual(self.registry[ComplexComponent]['instance'], None)
+        self.assertNotEqual(self.registry[ComplexComponent], None)
 
-        complex_comp = self.registry[ComplexComponent]['instance']
+        complex_comp = self.registry[ComplexComponent]
         simple_comp = complex_comp.simple
-        self.assertEqual(self.registry[SimpleComponent]['instance'], simple_comp)
+        self.assertEqual(self.registry[SimpleComponent], simple_comp)
 
     def inject_complex_component_test(self):
 
