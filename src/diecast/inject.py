@@ -13,12 +13,12 @@ from typing import (
     get_type_hints,
 )
 
-from diecast.types import Injector, ComponentRegistry
+from diecast.types import Injector
 
 _log = logging.getLogger(__name__)
 
 
-def _not_injectable(registry: ComponentRegistry, hint: Type) -> bool:
+def _not_injectable(registry: 'ComponentRegistry', hint: Type) -> bool:
 
     return hint == Any or hint not in registry or hint is Parameter.empty
 
@@ -37,7 +37,7 @@ def build_arg_mapping(fn: Callable) -> Mapping[str, Any]:
     return hints
 
 
-def build_passthru_args(registry: ComponentRegistry, fn: Callable) -> List[str]:
+def build_passthru_args(registry: 'ComponentRegistry', fn: Callable) -> List[str]:
 
     args = []
 
@@ -70,7 +70,7 @@ def map_passthru_args(passthru_args: List[str], *args, **kw) -> Mapping[str, Any
     return arg_map
 
 
-def make_injector(registry: ComponentRegistry) -> Injector:
+def make_injector(registry: 'ComponentRegistry') -> Injector:
 
     def _injector(fn: Callable):
 
@@ -85,7 +85,7 @@ def make_injector(registry: ComponentRegistry) -> Injector:
     return _injector
 
 
-def _do_inject(_registry: ComponentRegistry, _fn: Callable, *args, **kw) -> inspect.BoundArguments:
+def _do_inject(_registry: 'ComponentRegistry', _fn: Callable, *args, **kw) -> inspect.BoundArguments:
 
     _log.debug(f'Performing injection for {_fn} with {_registry}')
 
