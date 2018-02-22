@@ -3,15 +3,16 @@
 # this is the base test case of the DI prototype
 import logging
 import sys
-from typing import Callable, Type
+from typing import Type
 
 from diecast.component import Component
 from diecast.inject import build_passthru_args, make_injector
 from diecast.registry import get_registry, register_component
+from diecast.types import Injector
 
 # This builds a decorator - a Callable that returns a Callable
 # when given a Callable. oof.
-inject: Callable[[Callable], Callable] = make_injector(get_registry())
+inject: Injector = make_injector(get_registry())
 
 
 class TestComponent(Component):

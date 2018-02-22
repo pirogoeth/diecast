@@ -1,10 +1,8 @@
-diecast
-=======
+# diecast
 
 Diecast is a dependency injection framework for Python.
 
 It aims to be very simple to use, with an extremely simple API.
-
 
 ## Usage
 
@@ -12,19 +10,12 @@ To start with diecast, install it with `pip`:
 
     pip install -e git+https://github.com/pirogoeth/diecast.git#egg=diecast
 
-
 ### Component Registry
 
 Diecast has a global registry that can be used. Otherwise, you can easily build a new registry:
 
-    from diecast.types import ComponentRegistry
+    from diecast.registry import ComponentRegistry
     my_registry = ComponentRegistry()
-
-
-Or, if you want to avoid the re-typed spirit of the library:
-
-    my_registry = {}
-
 
 ### Injectors
 
@@ -38,7 +29,6 @@ Injectors must be created to inject dependencies into functions.  You can build 
 
     inject = make_injector(my_registry)
 
-
 ### Injecting Components
 
 After creating an injector, you can use it to decorate any function you want your components to be injected to:
@@ -48,7 +38,6 @@ After creating an injector, you can use it to decorate any function you want you
         return do_something(item)
 
     my_function()
-
 
 ### Creating Components
 
@@ -62,10 +51,21 @@ Diecast has a simple `Component` interface for building injectable components:
         def init(cls: Type[Component]) -> 'MyComponent':
             return MyComponent()
 
-
 ### Registering Components
 
-After defining your component(s), register them with the registry:
+After defining your component(s), add your component to the registry:
+
+    my_registry.add(
+        # `cls` is the type we will be injecting
+        cls=MyComponent,
+        # `init` is a callable which will create the instance of `cls`
+        # <Component>.init is the default initializer and does not need to be explicitly set
+        init=MyComponent.init,
+        # `init` will *only* be called once and the instance will be stored
+        persist=True,
+    )
+
+Or, if you are using the global registry, you can use this shortcut:
 
     from diecast.registry import register_component
 
@@ -82,20 +82,29 @@ After defining your component(s), register them with the registry:
         registry=my_registry,
     )
 
+### Getting Component Instances
+
+You can fetch component instances easily by subscripting the registry:
+
+    instance = my_registry[MyComponent]
+
+If the component was registered with `persist=True`, the subscript will return the
+persisted component instance.
+
+If there is not a persisted instance, the subscript will return a new instance
+of the component.
 
 ## Examples
 
 Some more practical usage examples are include in the [examples directory](/examples/).
 
-
 ## Contributing
 
 Pull requests are welcomed and encouraged.  Feel free to ask questions via the issue tracker or anywhere else (such as [Gitter](https://gitter.im/pirogoeth)).
 
-If you're submitting a PR, please install [`pre-commit`](https://github.com/pre-commit/pre-commit) and install the local git pre-commit hook to run style checks. 
+If you're submitting a PR, please install [`pre-commit`](https://github.com/pre-commit/pre-commit) and install the local git pre-commit hook to run style checks.
 
 Any contributions will be greatly appreciated <3.
-
 
 ## License
 
