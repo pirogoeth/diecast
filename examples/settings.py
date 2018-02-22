@@ -6,11 +6,10 @@ from typing import Type
 
 from diecast.component import Component
 from diecast.inject import make_injector
-from diecast.registry import (
-    get_registry,
-    register_component,
-)
+from diecast.registry import ComponentRegistry
 from diecast.types import Injector
+
+registry = ComponentRegistry()
 
 
 class Settings(Component):
@@ -46,15 +45,14 @@ class Settings(Component):
 
 
 # I'll be using explicit argument forms here.
-register_component(
+registry.add(
     cls=Settings,
     init=Settings.init,
     persist=True,
-    registry=get_registry(),
 )
 
 # Create an injector to use the Settings component
-inject: Injector = make_injector(get_registry())
+inject: Injector = make_injector(registry)
 
 
 # Make a function to use the Settings component
@@ -62,3 +60,9 @@ inject: Injector = make_injector(get_registry())
 def is_debugging(settings: Settings) -> bool:
 
     return settings.DEBUG
+
+
+if __name__ == '__main__':
+
+    print('settings.DEBUG:', is_debugging())
+    print('environment:', registry[Settings].environment)
