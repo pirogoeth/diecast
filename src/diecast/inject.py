@@ -104,12 +104,8 @@ def _do_inject(_registry: 'ComponentRegistry', _fn: Callable, *args, **kw) -> in
             # Initialize dependency - should also perform DI on this!
             _log.debug(f'Initialize dependency for injection {dep}')
 
-            instance = dep.get('init')()
-            if dep.get('persist'):
-                dep.update({'instance': instance})
-
             injected_params.update({
-                arg: instance,
+                arg: _registry[hint],
             })
         else:
             injected_params.update({
