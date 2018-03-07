@@ -24,6 +24,14 @@ def _not_injectable(registry: 'ComponentRegistry', hint: Type) -> bool:
 
 
 def build_arg_mapping(fn: Callable) -> Mapping[str, Any]:
+    ''' Builds a dictionary mapping of argument names to
+        the corresponding type annotations from the function.
+
+        Only returns a mapping of function arguments, eliding over the
+        return type annotation provided by `get_type_hints`. Updates
+        the type hint for arguments without type annotations to be
+        `typing.Any`.
+    '''
 
     hints = get_type_hints(fn)
     if 'return' in hints:
@@ -38,6 +46,9 @@ def build_arg_mapping(fn: Callable) -> Mapping[str, Any]:
 
 
 def build_passthru_args(registry: 'ComponentRegistry', fn: Callable) -> List[str]:
+    ''' Builds and returns a list of arguments (their names) that will be
+        passed through when the injected function `fn` is called.
+    '''
 
     args = []
 
@@ -53,6 +64,10 @@ def build_passthru_args(registry: 'ComponentRegistry', fn: Callable) -> List[str
 
 
 def map_passthru_args(passthru_args: List[str], *args, **kw) -> Mapping[str, Any]:
+    ''' Builds a mapping of passthrough args to their values.
+        Only maps passed through args into `**kw` that will be
+        passed into the function.
+    '''
 
     arg_map = {}
 
@@ -71,6 +86,11 @@ def map_passthru_args(passthru_args: List[str], *args, **kw) -> Mapping[str, Any
 
 
 def make_injector(registry: 'ComponentRegistry') -> Injector:
+    ''' This is just a "magical" function that returns a decorator that
+        has been bound to a registry.
+
+        `registry` is closured in to `_arg_injector`.
+    '''
 
     def _injector(fn: Callable):
 
@@ -86,6 +106,14 @@ def make_injector(registry: 'ComponentRegistry') -> Injector:
 
 
 def _do_inject(_registry: 'ComponentRegistry', _fn: Callable, *args, **kw) -> inspect.BoundArguments:
+    ''' Given a `_registry`, `_fn` to inject, as well as the arguments
+        to be passed to `_fn`, creates an `inspect.Signature` for the
+        function. We then bind all injected and passthrough arguments to
+        the `inspect.Signature` using `sig.bind_partial`.
+
+        Funnily enough, this does not *actually* bind the function itself,
+        or even execute the function.
+    '''
 
     _log.debug(f'Performing injection for {_fn} with {_registry}')
 
@@ -122,5 +150,8 @@ def _do_inject(_registry: 'ComponentRegistry', _fn: Callable, *args, **kw) -> in
 
 
 def _call_with_bound_params(fn: Callable, sig_params: inspect.BoundArguments) -> Any:
+    ''' Uses a Signature's BoundArguments to execute the
+        underlying function.
+    '''
 
     return fn(*sig_params.args, **sig_params.kwargs)
