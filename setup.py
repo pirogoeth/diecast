@@ -22,8 +22,10 @@ setup(
 
     classifiers=[
         'Development Status :: 4 - Beta',
-        'License :: MIT',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages('src'),
     package_dir={
