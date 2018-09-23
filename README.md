@@ -39,6 +39,17 @@ After creating an injector, you can use it to decorate any function you want you
 
     my_function()
 
+When calling an injected function, you can either omit the arguments you expect to be injected
+OR you can replace the injected arguments with `...` as a placeholder.
+
+    @inject
+    def my_function2(item: MyComponent, doer_cb: Callable[[Any], [Any]]) -> Any:
+        return doer_cb(do_something(item))
+
+    my_function2(..., lambda item: mutate(item))
+    # is roughly equivalent to:
+    my_function2(lambda item: mutate(item))
+
 ### Creating Components
 
 Diecast has a simple `Component` interface for building injectable components:

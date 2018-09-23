@@ -64,5 +64,5 @@ def is_debugging(settings: Settings) -> bool:
 
 if __name__ == '__main__':
 
-    print('settings.DEBUG:', is_debugging())
+    print('settings.DEBUG:', is_debugging(...))
     print('environment:', registry[Settings].environment)

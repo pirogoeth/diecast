@@ -83,3 +83,17 @@ class ComponentTestCase(unittest.TestCase):
             return complex_comp.simple.some_action('success')
 
         self.assertEqual(_test_func(), 'success')
+
+    def inject_complex_ellipses_placeholder_test(self):
+
+        self.persist_complex_component_test()
+
+        inject = make_injector(self.registry)
+
+        @inject
+        def _test_func(complex_comp: ComplexComponent):
+
+            self.assertIsInstance(complex_comp, ComplexComponent)
+            return complex_comp.simple.some_action('success')
+
+        self.assertEqual(_test_func(...), 'success')
