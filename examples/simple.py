@@ -73,8 +73,8 @@ if __name__ == '__main__':
     assert(len(passthru) == 1)
     assert('another_arg' in passthru)
 
-    value = example('this is a part of the direct call')
+    value = example(..., 'this is a part of the direct call')
     print('example (injected):', value)
 
-    value = embedding()
+    value = embedding(...)
     print('embedding (injected):', value)
