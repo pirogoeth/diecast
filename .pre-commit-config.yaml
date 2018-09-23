@@ -1,13 +1,38 @@
+repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  sha: master
+  rev: v1.4.0
   hooks:
+  - id: check-added-large-files
+  - id: check-ast
+  - id: check-case-conflict
+  - id: check-docstring-first
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: check-yaml
+    args:
+    - --unsafe
+  - id: debug-statements
+  - id: end-of-file-fixer
+  - id: fix-encoding-pragma
   - id: flake8
     args:
-    - --ignore=W391,F401
     - --exclude=docs/*,tests/*
     - --max-line-length=131
-  - id: check-ast
-  - id: debug-statements
-  - id: fix-encoding-pragma
-  - id: end-of-file-fixer
-  - id: check-merge-conflict
+  - id: forbid-new-submodules
+  - id: mixed-line-ending
+    args:
+    - --fix=lf
+  - id: name-tests-test
+  - id: no-commit-to-branch
+    args:
+    - -b master
+  - id: trailing-whitespace
+- repo: https://github.com/ambv/black
+  rev: 18.6b4
+  hooks:
+    - id: black
+      language_version: python3.6
+- repo: https://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.1.5
+  hooks:
+    - id: remove-tabs

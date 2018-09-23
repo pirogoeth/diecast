@@ -4,14 +4,10 @@ import unittest
 
 from diecast.inject import make_injector
 from diecast.registry import ComponentRegistry, register_component
-from tests.components import (
-    SimpleComponent,
-    ComplexComponent,
-)
+from tests.components import SimpleComponent, ComplexComponent
 
 
 class ComponentTestCase(unittest.TestCase):
-
     def setUp(self):
 
         self.registry = ComponentRegistry()
@@ -36,29 +32,29 @@ class ComponentTestCase(unittest.TestCase):
             registry=self.registry,
         )
 
-    def register_simple_component_test(self):
+    def test_register_simple_component(self):
 
         self.register_simple_component(persist=False)
 
         self.assertIn(SimpleComponent, self.registry)
-        self.assertEqual(self.registry.get(SimpleComponent)['instance'], None)
+        self.assertEqual(self.registry.get(SimpleComponent)["instance"], None)
 
-    def register_complex_component_test(self):
+    def test_register_complex_component(self):
 
         self.register_simple_component(persist=False)
         self.register_complex_component(persist=False)
 
         self.assertIn(ComplexComponent, self.registry)
-        self.assertEqual(self.registry.get(ComplexComponent)['instance'], None)
+        self.assertEqual(self.registry.get(ComplexComponent)["instance"], None)
 
-    def persist_simple_component_test(self):
+    def test_persist_simple_component(self):
 
         self.register_simple_component(persist=True)
 
         self.assertIn(SimpleComponent, self.registry)
         self.assertNotEqual(self.registry[SimpleComponent], None)
 
-    def persist_complex_component_test(self):
+    def test_persist_complex_component(self):
 
         self.register_simple_component(persist=True)
         self.register_complex_component(persist=True)
@@ -70,23 +66,9 @@ class ComponentTestCase(unittest.TestCase):
         simple_comp = complex_comp.simple
         self.assertEqual(self.registry[SimpleComponent], simple_comp)
 
-    def inject_complex_component_test(self):
+    def test_inject_complex_component(self):
 
-        self.persist_complex_component_test()
-
-        inject = make_injector(self.registry)
-
-        @inject
-        def _test_func(complex_comp: ComplexComponent):
-
-            self.assertIsInstance(complex_comp, ComplexComponent)
-            return complex_comp.simple.some_action('success')
-
-        self.assertEqual(_test_func(), 'success')
-
-    def inject_complex_ellipses_placeholder_test(self):
-
-        self.persist_complex_component_test()
+        self.test_persist_complex_component()
 
         inject = make_injector(self.registry)
 
@@ -94,6 +76,37 @@ class ComponentTestCase(unittest.TestCase):
         def _test_func(complex_comp: ComplexComponent):
 
             self.assertIsInstance(complex_comp, ComplexComponent)
-            return complex_comp.simple.some_action('success')
+            return complex_comp.simple.some_action("success")
 
-        self.assertEqual(_test_func(...), 'success')
+        self.assertEqual(_test_func(), "success")
+
+    def test_inject_complex_ellipses_placeholder(self):
+
+        self.test_persist_complex_component()
+
+        inject = make_injector(self.registry)
+
+        @inject
+        def _test_func(complex_comp: ComplexComponent):
+
+            self.assertIsInstance(complex_comp, ComplexComponent)
+            return complex_comp.simple.some_action("success")
+
+        self.assertEqual(_test_func(...), "success")
+
+    def test_inject_complex_ellipses_ordering(self):
+
+        self.test_persist_complex_component()
+
+        inject = make_injector(self.registry)
+
+        @inject
+        def _test_func(a: int, b: str, complex_comp: ComplexComponent, d: float):
+
+            self.assertEqual(a, 42)
+            self.assertEqual(b, "testing")
+            self.assertIsInstance(complex_comp, ComplexComponent)
+            self.assertEqual(d, 10.2)
+            return complex_comp.simple.some_action("success")
+
+        self.assertEqual(_test_func(42, "testing", ..., 10.2), "success")

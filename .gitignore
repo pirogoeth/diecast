@@ -1,3 +1,6 @@
+.vscode
+.coverage
+htmlcov
 .mypy_cache
 build/
 dist/
