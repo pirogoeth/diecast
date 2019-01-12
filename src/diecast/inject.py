@@ -66,7 +66,7 @@ def map_passthru_args(passthru_args: List[str], *args, **kw) -> Mapping[str, Any
 
     # If `*args` or `*kw` contain an ellipses, drop that entry
     args = list(filter(lambda item: item is not ..., args))
-    kw = dict(filter(lambda _, val: val is not ..., kw))
+    kw = dict(filter(lambda item: item[1] is not ..., kw.items()))
 
     # Apply *args in order
     for name, val in zip(passthru_args, args):
@@ -127,11 +127,13 @@ def _do_inject(
         dep = _registry.get(hint)
 
         if dep["instance"] is None:
-            # Initialize dependency - should also perform DI on this!
+            # This branch happens on non-persisted components
             _log.debug(f"Initialize dependency for injection {dep}")
-
+            # registry[item] is a shortcut for initializing a component
+            # from a hint
             injected_params.update({arg: _registry[hint]})
         else:
+            # This branch happens on persisted components
             injected_params.update({arg: dep.get("instance")})
 
     passthru_args = build_passthru_args(_registry, _fn)
